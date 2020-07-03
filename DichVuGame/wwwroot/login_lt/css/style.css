@@ -264,7 +264,7 @@ a {
 .login-check {
     position: relative;
 }
-.checkbox i {
+/*.checkbox i {
     position: absolute;
     top: 0px;
     left: 0%;
@@ -279,7 +279,7 @@ a {
     -moz-border-radius: 0px;
     -o-border-radius: 0px;
     cursor: pointer;
-}
+}*/
 .checkbox input:checked + i:after {
     opacity: 1;
 }
@@ -299,7 +299,7 @@ a {
     width: 15px;
     height: 15px;
 }
-.checkbox {
+/*.checkbox {
     position: relative;
     display: block;
     padding-left: 30px;
@@ -307,10 +307,10 @@ a {
     letter-spacing: 1px;
     font-size: 14px;
     color: #fff;
-}
-input[type="checkbox" i] {
+}*/
+/*input[type="checkbox" i] {
     display: none;
-}
+}*/
 
 /*-- w3layouts --*/
 /*-- header end here --*/

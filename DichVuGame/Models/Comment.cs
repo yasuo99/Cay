@@ -18,6 +18,7 @@ namespace DichVuGame.Models
         public string UserComment { get; set; }
         [Display(Name = "Ngày bình luận")]
         public DateTime CommentDate { get; set; }
+        public bool IsClosed { get; set; }
         public virtual ICollection<GameComment> Games { get; set; }
     }
 }

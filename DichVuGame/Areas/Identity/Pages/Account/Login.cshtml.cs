@@ -28,9 +28,9 @@ namespace DichVuGame.Areas.Identity.Pages.Account
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
         private readonly ApplicationDbContext _db;
-        public LoginModel(SignInManager<IdentityUser> signInManager, 
+        public LoginModel(SignInManager<IdentityUser> signInManager,
             ILogger<LoginModel> logger,
-            UserManager<IdentityUser> userManager,ApplicationDbContext db)
+            UserManager<IdentityUser> userManager, ApplicationDbContext db)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -91,36 +91,54 @@ namespace DichVuGame.Areas.Identity.Pages.Account
                 var result = await _signInManager.CheckPasswordSignInAsync(user, Input.Password, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
-                    if(await _userManager.IsInRoleAsync(user,Helper.ADMIN_ROLE) || await _userManager.IsInRoleAsync(user, Helper.CUSTOMERCARE_ROLE)|| await _userManager.IsInRoleAsync(user, Helper.MANAGER_ROLE)|| await _userManager.IsInRoleAsync(user, Helper.MRHAI_ROLE))
+                    if (await _userManager.IsInRoleAsync(user, Helper.ADMIN_ROLE) || await _userManager.IsInRoleAsync(user, Helper.CUSTOMERCARE_ROLE) || await _userManager.IsInRoleAsync(user, Helper.MANAGER_ROLE) || await _userManager.IsInRoleAsync(user, Helper.MRHAI_ROLE))
                     {
-                        return RedirectToAction("Index", "AdminHome", new { area = "Admin"});
-                    }
-                    var otpFromSession = HttpContext.Session.Get<OTPSession>("OTP");
-                    if(DateTime.Now.CompareTo(otpFromSession) > 0)
-                    {
-                        var randomOtp = new Random().Next(10000,99999);
-                        OTPSession otpSession = new OTPSession(randomOtp, DateTime.Now.AddMinutes(5),Input.Email,Input.Password);
-                        HttpContext.Session.Set("OTP", otpSession);
-                        using (SmtpClient client = new SmtpClient())
+                        var login = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+                        if (user.EmailConfirmed)
                         {
-                            var message = new MimeMessage();
-                            message.From.Add(new MailboxAddress("GameProvider", "yasuo12091999@gmail.com"));
-                            message.To.Add(new MailboxAddress("Không trả lời", user.Email));
-                            message.Subject = "Xác thực OTP";
-                            message.Body = new TextPart(MimeKit.Text.TextFormat.Text)
-                            { Text = "Chúng tôi nhận thấy bạn vừa thực hiện đăng nhập, vui lòng sử dụng mã OTP được cung cấp để xác thực!" + Environment.NewLine + "Mã OTP: " + randomOtp + 
-                            Environment.NewLine + "Thời gian hiệu lực OTP: 5 phút."};
-                            client.Connect("smtp.gmail.com", 465, true);
-                            client.Authenticate("yasuo120999@gmail.com", "Thanhpro1999@");
-                            client.Send(message);
-                            client.Disconnect(true);
+                            return RedirectToAction("Index", "AdminHome", new { area = "Admin" });
+                        }
+                        else
+                        {
+                            return LocalRedirect("/Identity/Account/Manage/ChangePassword");
+                        }
+                    }
+                    if (user.EmailConfirmed)
+                    {
+                        var otpFromSession = HttpContext.Session.Get<OTPSession>("OTP");
+                        if (DateTime.Now.CompareTo(otpFromSession) > 0)
+                        {
+                            var randomOtp = new Random().Next(10000, 99999);
+                            OTPSession otpSession = new OTPSession(randomOtp, DateTime.Now.AddMinutes(5), Input.Email, Input.Password, Input.RememberMe);
+                            HttpContext.Session.Set("OTP", otpSession);
+                            using (SmtpClient client = new SmtpClient())
+                            {
+                                var message = new MimeMessage();
+                                message.From.Add(new MailboxAddress("GameProvider", "yasuo12091999@gmail.com"));
+                                message.To.Add(new MailboxAddress("Không trả lời", user.Email));
+                                message.Subject = "Xác thực OTP";
+                                message.Body = new TextPart(MimeKit.Text.TextFormat.Text)
+                                {
+                                    Text = "Chúng tôi nhận thấy bạn vừa thực hiện đăng nhập, vui lòng sử dụng mã OTP được cung cấp để xác thực!" + Environment.NewLine + "Mã OTP: " + randomOtp +
+                                Environment.NewLine + "Thời gian hiệu lực OTP: 5 phút."
+                                };
+                                client.Connect("smtp.gmail.com", 465, true);
+                                client.Authenticate("yasuo120999@gmail.com", "Thanhpro1999@");
+                                client.Send(message);
+                                client.Disconnect(true);
+                                return RedirectToPage("OTPConfirm");
+                            }
+                        }
+                        else if (DateTime.Now.CompareTo(otpFromSession) < 0)
+                        {
+                            ModelState.AddModelError("OTPRequire", "Mã OTP đã được gửi");
                             return RedirectToPage("OTPConfirm");
                         }
                     }
-                    else if(DateTime.Now.CompareTo(otpFromSession) < 0)
+                    else
                     {
-                        ModelState.AddModelError("OTPRequire", "Mã OTP đã được gửi");
-                        return RedirectToPage("OTPConfirm");
+                        ModelState.AddModelError("ConfirmEmail", "Vui lòng xác nhận email đăng ký để sử dụng");
+                        return Page();
                     }
                 }
                 if (result.RequiresTwoFactor)

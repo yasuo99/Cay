@@ -51,7 +51,7 @@ namespace DichVuGame.Areas.Customer.Controllers
             }
             else
             {
-                return RedirectToAction("Details", "Home", new { area = "Customer", id = id,requireLogin = "Vui lòng đăng nhập"});
+                return RedirectToAction("Details", "Home", new { area = "Customer", id = id,requireLogin = "yes"});
             }
             return RedirectToAction("Details", "Home", new { area = "Customer", id = id });
         }

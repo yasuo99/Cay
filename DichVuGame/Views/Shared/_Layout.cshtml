@@ -34,10 +34,10 @@
                                     <a class="nav-link text-white" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@await Component.InvokeAsync("Username")</a>
                                 </li>
                                 <li class="top_li mr-lg-0">
-                                    <a class="nav-link text-white fa fa-history" asp-area="Customer" asp-controller="Home" asp-action="History">Lịch sử</a>
+                                    <a class="nav-link text-white fa fa-history" asp-area="Customer" asp-controller="TopupHistories" asp-action="Index">Lịch sử</a>
                                 </li>
                                 <li class="top_li mr-lg-0">
-                                    <a class="nav-link text-white fa fa-comments" asp-area="Customer" asp-controller="Reviews" asp-action="Index">Nhận xét</a>
+                                    <a class="nav-link text-white fa fa-comments" asp-area="Customer" asp-controller="GameReviews" asp-action="Index">Nhận xét</a>
                                 </li>
                             }
                             else
@@ -117,7 +117,7 @@
                         <!--/nav-->
                         <nav class="navbar navbar-expand-lg navbar-light fill">
                             <div class="container-fluid">
-                                <a class="navbar-brand" href="index.html">
+                                <a class="navbar-brand" asp-area="Customer" asp-controller="Home" asp-action="Index">
                                     <label class="lohny"><span class="fa fa-gamepad" aria-hidden="true"></span>HCMUTE</label>GAME
                                 </a>
                                 <!-- if logo is image enable this
@@ -149,9 +149,9 @@
                                     </ul>
 
                                 </div>
-                                @using (Html.BeginForm("Search", "Home", FormMethod.Get, new { @class = "d-flex searchhny-form" }))
+                                @using (Html.BeginForm("Search", "Home", FormMethod.Get, new { @id = "searchform", @class = "d-flex searchhny-form" }))
                                 {
-                                    @Html.Editor("q", new { htmlAttributes = new { @class = "form-control", autocomplete = "off", placeholder = "Từ khóa", style = "border-radius=10px;font-size:14px;", required = "required" } })
+                                    @Html.Editor("q", new { htmlAttributes = new { @id = "searchtextbox", @class = "form-control", autocomplete = "off", placeholder = "Từ khóa", style = "border-radius=10px;font-size:14px;", required = "required" } })
                                     <button type="submit"><span class="fa fa-search" aria-hidden="true"></span></button>
                                 }
                             </div>
@@ -167,7 +167,7 @@
 
                                 <li class="button-4 mx-auto" style="margin-bottom:4px">
                                     <div class="eff-4"></div>
-                                    <a href="#maincontent"> Trải nghiệm ngay</a>
+                                    <a href="#mainproduct"> Trải nghiệm ngay</a>
                                 </li>
 
                             </ol>
@@ -320,13 +320,7 @@
             }
         </script>
         <!-- //move top -->
-        <script>
-            $(function () {
-                $('.navbar-toggler').click(function () {
-                    $('body').toggleClass('noscroll');
-                })
-            });
-        </script>
+
     </section>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -341,5 +335,15 @@
             });
         })
     </script>
+    <script>
+        $(function () {
+            $('.navbar-toggler').click(function () {
+                $('body').toggleClass('noscroll');
+            })
+        });
+    </script>
+    @section Scripts{
+        @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }
 </body>
 </html>

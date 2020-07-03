@@ -58,7 +58,8 @@ namespace DichVuGame.Areas.Identity.Pages.Account
                     pageHandler: null,
                     new { code = code, test = email},
                     protocol: Request.Scheme);
-
+                if(user.EmailConfirmed)
+                {     
                 using (SmtpClient client = new SmtpClient())
                 {
                     var message = new MimeMessage();
@@ -73,6 +74,12 @@ namespace DichVuGame.Areas.Identity.Pages.Account
                     client.Disconnect(true);
                     return RedirectToPage("./ForgotPasswordConfirmation");
 
+                }
+                }
+                else
+                {
+                    ModelState.AddModelError("ConfirmEmail", "Cần xác nhận email để thực hiện");
+                    return Page();
                 }
             }
             return Page();

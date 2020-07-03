@@ -68,7 +68,7 @@ namespace DichVuGame.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (StudioExists(studio.Studioname))
+                if (!StudioExists(studio.Studioname))
                 {
                     _context.Add(studio);
                     await _context.SaveChangesAsync();

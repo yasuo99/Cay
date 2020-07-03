@@ -56,8 +56,10 @@
                 </div>
                 <div class="header-left-bottom">
                     <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
-
-                        <div style="color:red">
+                        <div style="color:red;text-align:center">
+                            @Html.ValidationMessage("SameEmail")
+                        </div>
+                        <div style="color:red;text-align:center">
                             @Html.ValidationMessage("SameUsername")
                         </div>
                         <div class="icon1">
@@ -109,13 +111,21 @@
 
                         @if (User.IsInRole(DichVuGame.Utility.Helper.ADMIN_ROLE))
                         {
-                            <div class="login-check">
-
-                                <label asp-for="Input.IsManager" class="checkbox"><input class="chk" asp-for="Input.IsManager" type="checkbox" name="checkbox">Nhân viên quản lý<i></i></label>
-                            </div>
-                            <div class="login-check">
-
-                                <label asp-for="Input.IsCustomerCare" class="checkbox"><input class="chk" asp-for="Input.IsCustomerCare" type="checkbox" name="checkbox">Nhân viên CSKH<i></i></label>
+                            <div class="col-4" style="color:white;font-family:Bahnschrift;text-align:center">
+                                <div class="col-3">
+                                    <label asp-for="@Model.Input.IsManager"></label>
+                                </div>
+                                <div class="col-5">
+                                    <input class="chk" asp-for="Input.IsManager" type="checkbox">
+                                </div>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <label asp-for="@Model.Input.IsCustomerCare"></label>
+                                    </div>
+                                    <div class="col-5">
+                                        <input class="chk" asp-for="Input.IsCustomerCare" type="checkbox">
+                                    </div>
+                                </div>
                             </div>
 
                         }
@@ -123,6 +133,17 @@
                         <div class="bottom">
 
                             <button type="submit" class="btn" style="font-family:Bahnschrift">ĐĂNG KÝ</button>
+                            <div>
+                                @if (User.IsInRole(DichVuGame.Utility.Helper.ADMIN_ROLE))
+                                {
+                                    <a style="float:left;color:white;font-family:Bahnschrift" asp-area="Admin" asp-controller="ApplicationUser" asp-action="Index">&lt;Quay lại</a>
+                                }
+                                else
+                                {
+                                    <a style="float:left;color:white;font-family:Bahnschrift" asp-area="Customer" asp-controller="Home" asp-action="Index">&lt;Trang chủ</a>
+                                    <a style="float:right;color:white;font-family:Bahnschrift" asp-area="Identity" asp-page="/Account/Login">Đăng nhập&gt;</a>
+                                }
+                            </div>
                         </div>
                     </form>
                 </div>

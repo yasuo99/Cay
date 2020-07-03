@@ -1,4 +1,5 @@
-﻿@{
+﻿@model DichVuGame.Models.ViewModels.SpinwheelViewModel
+@{
     ViewData["Title"] = "SpinWheel";
 }
 
@@ -12,27 +13,48 @@
 
     <div style="zoom:2.5">
 
-
-        <div id="wrapper">
-
-            <div id="wheel">
-                <div id="inner-wheel">
-                    <div class="sec"><span class="fa fa-bell-o"></span></div>
-                    <div class="sec"><span class="fa fa-comment-o"></span></div>
-                    <div class="sec"><span class="fa fa-smile-o"></span></div>
-                    <div class="sec"><span class="fa fa-heart-o"></span></div>
-                    <div class="sec"><span class="fa fa-star-o"></span></div>
-                    <div class="sec"><span class="fa fa-lightbulb-o"></span></div>
+        <div class="modal" tabindex="-1" role="dialog" hidden>
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Modal body text goes here.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
                 </div>
-
-                <div id="spin">
-                    <div id="inner-spin"></div>
-                </div>
-
-                <div id="shine"></div>
             </div>
-            <div id="txt"></div>
         </div>
+        <form asp-action="Reward" id="spin-form">
+            <div id="wrapper">
+
+                <div id="wheel">
+                    <div id="inner-wheel">
+                        <div class="sec"><span class="fa fa-gift"></span></div>
+                        <div class="sec"><span class="fa fa-gift"></span></div>
+                        <div class="sec"><span class="fa fa-gift"></span></div>
+                        <div class="sec"><span class="fa fa-gift"></span></div>
+                        <div class="sec"><span class="fa fa-gift"></span></div>
+                        <div class="sec"><span class="fa fa-gift"></span></div>
+                    </div>
+
+                    <div id="spin">
+                        <div id="inner-spin"></div>
+                    </div>
+
+                    <div id="shine"></div>
+                </div>
+                <div id="txt"></div>
+            </div>
+            <button type="submit" hidden></button>
+        </form>
     </div>
 </body>
 <!--   End of Button Zone   -->

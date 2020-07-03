@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using DichVuGame.Data;
 using DichVuGame.Extensions;
+using DichVuGame.Models;
 using DichVuGame.Utility;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -32,33 +33,62 @@ namespace DichVuGame.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required,Display(Name = "OTP")]
-            public int OTP { get; set; }
+            public string OTP { get; set; }
+            public bool IsEmailConfirmed { get; set; }
         }
         [TempData]
         public string ErrorMessage { get; set; }
-        public async Task OnGetAsync()
+        public string ReturnUrl { get; set; }
+        public async Task<IActionResult> OnGetAsync(string returnUrl = null)
         {
-            if (!string.IsNullOrEmpty(ErrorMessage))
+            var otpSession = HttpContext.Session.Get<OTPSession>("OTP");
+            if(otpSession == null)
             {
-                ModelState.AddModelError(string.Empty, ErrorMessage);
+                return RedirectToPage("Login");
             }
+            else
+            {
+                var user = _db.ApplicationUsers.Where(u => u.Email == otpSession.Email).FirstOrDefault();
+                Input = new InputModel()
+                {
+                    IsEmailConfirmed = user.EmailConfirmed,
+                    OTP = null
+                };
+                if (!string.IsNullOrEmpty(ErrorMessage))
+                {
+                    ModelState.AddModelError(string.Empty, ErrorMessage);
+                }
+                returnUrl = returnUrl ?? Url.Content("~/");
 
+                // Clear the existing external cookie to ensure a clean login process
+                await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
-            // Clear the existing external cookie to ensure a clean login process
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-
-            ExternalLogins = (await _signinManager.GetExternalAuthenticationSchemesAsync()).ToList();
-
+                ExternalLogins = (await _signinManager.GetExternalAuthenticationSchemesAsync()).ToList();
+                ReturnUrl = returnUrl;
+                return Page();
+            }    
         }
         public async Task<IActionResult> OnPostAsync()
         {
             var otpSession = HttpContext.Session.Get<OTPSession>("OTP");
-            if(Input.OTP.Equals(otpSession.OTP))
+            if(Input.OTP.Equals(otpSession.OTP.ToString()))
             {
                 var user = _db.ApplicationUsers.Where(u => u.Email == otpSession.Email).FirstOrDefault();
-                await _signinManager.PasswordSignInAsync(otpSession.Email, otpSession.Password,false, lockoutOnFailure: true);
-            }    
-            return RedirectToAction("Index", "Home", new { area = "Customer" });
+                var login = await _signinManager.PasswordSignInAsync(otpSession.Email, otpSession.Password,false, lockoutOnFailure: true);
+                if (login.Succeeded) {
+                    HttpContext.Session.Clear();
+                    return RedirectToAction("Index", "Home", new { area = "Customer" });
+                }
+                else
+                {
+                    return RedirectToPage("Login");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("InvalidOTP", "Mã xác thực không chính xác");
+                return Page();
+            }
         }
     }
 }

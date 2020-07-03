@@ -46,6 +46,9 @@
                     <span class="fa fa-gamepad"></span>
                 </div>
                 <div class="header-left-bottom">
+                    <div style="color:red;text-align:center">
+                        @Html.ValidationMessage("ConfirmEmail")
+                    </div>
                     <form id="account" method="post">
                         <div class="icon1">
                             @*<span asp-validation-for="Input.Email" class="fa fa-user" ></span>*@

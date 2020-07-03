@@ -84,7 +84,10 @@ namespace DichVuGame.Areas.Identity.Pages.Account.Manage
             await LoadAsync(user);
             return Page();
         }
-
+        private bool SameUsername(string username)
+        {
+            return _db.ApplicationUsers.Any(u => u.User == username);
+        }
         public async Task<IActionResult> OnPostAsync()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -101,38 +104,45 @@ namespace DichVuGame.Areas.Identity.Pages.Account.Manage
                 await LoadAsync(user);
                 return Page();
             }
-
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            if (Input.PhoneNumber != phoneNumber)
+            if(!SameUsername(Input.User))
             {
-                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
-                if (!setPhoneResult.Succeeded)
+                var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+                if (Input.PhoneNumber != phoneNumber)
                 {
-                    var userId = await _userManager.GetUserIdAsync(user);
-                    throw new InvalidOperationException($"Unexpected error occurred setting phone number for user with ID '{userId}'.");
+                    var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
+                    if (!setPhoneResult.Succeeded)
+                    {
+                        var userId = await _userManager.GetUserIdAsync(user);
+                        throw new InvalidOperationException($"Unexpected error occurred setting phone number for user with ID '{userId}'.");
+                    }
                 }
+                if (Input.User != claimUser.User)
+                {
+                    claimUser.User = Input.User;
+                    _db.ApplicationUsers.Update(claimUser);
+                    await _db.SaveChangesAsync();
+                }
+                if (Input.Fullname != claimUser.Fullname)
+                {
+                    claimUser.Fullname = Input.Fullname;
+                    _db.ApplicationUsers.Update(claimUser);
+                    await _db.SaveChangesAsync();
+                }
+                if (Input.Address != claimUser.Address)
+                {
+                    claimUser.Address = Input.Address;
+                    _db.ApplicationUsers.Update(claimUser);
+                    await _db.SaveChangesAsync();
+                }
+                await _signInManager.RefreshSignInAsync(user);
+                StatusMessage = "Cập nhật thông tin tài khoản thành công";
+                return RedirectToPage();
             }
-            if(Input.User != claimUser.User)
+            else
             {
-                claimUser.User = Input.User;
-                _db.ApplicationUsers.Update(claimUser);
-                await _db.SaveChangesAsync();
-            }    
-            if(Input.Fullname != claimUser.Fullname)
-            {
-                claimUser.Fullname = Input.Fullname;
-                _db.ApplicationUsers.Update(claimUser);
-                await _db.SaveChangesAsync();
+                ModelState.AddModelError("SameUsername", "Tài khoản đã được sử dụng");
+                return Page();
             }
-            if (Input.Address != claimUser.Address)
-            {
-                claimUser.Address = Input.Address;
-                _db.ApplicationUsers.Update(claimUser);
-                await _db.SaveChangesAsync();
-            }
-            await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Cập nhật thông tin tài khoản thành công";
-            return RedirectToPage();
         }
     }
 }

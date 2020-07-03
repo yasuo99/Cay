@@ -41,12 +41,15 @@
     <!-- main -->
     <div class="w3layouts-main">
         <div class="bg-layer">
-            <h1 style="font-family:Bahnschrift">ĐĂNG NHẬP</h1>
+            <h1 style="font-family:Bahnschrift">XÁC THỰC</h1>
             <div class="header-main">
                 <div class="main-icon">
                     <span class="fa fa-gamepad"></span>
                 </div>
                 <div class="header-left-bottom">
+                    <div style="text-align:center;color:red;font-size:15px">
+                        @Html.ValidationMessage("InvalidOTP")
+                    </div>
                     <form id="account" method="post">
                         <div class="icon1">
                             @*<span asp-validation-for="Input.Email" class="fa fa-user" ></span>*@
@@ -56,10 +59,14 @@
                         <div class="bottom">
                             <button class="btn">Xác thực</button>
                         </div>
-                        <div class="links">
-                            <p><a asp-page="./ForgotPassword" style="font-size:13px;font-family:Bahnschrift"> ?</a></p>
-                            <div class="clear"></div>
-                        </div>
+                        @if (Model.Input.IsEmailConfirmed)
+                        {
+                            <div class="links">
+                                <p><a asp-area="Identity" asp-controller="AccountConfirm" asp-action="ResendOTP" asp-route-returnUrl="@Model.ReturnUrl" style="font-size:13px;font-family:Bahnschrift"> Gửi lại mã</a></p>
+                                <div class="clear"></div>
+                                <div class="text-info">@Html.ValidationMessage("ExpireOTP")</div>
+                            </div>
+                        }
                     </form>
                 </div>
                 @*<div class="social">

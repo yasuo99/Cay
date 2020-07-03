@@ -14,6 +14,7 @@ namespace DichVuGame.Models
         public string ApplicationUserID { get; set; }
         [ForeignKey("ApplicationUserID")]
         public ApplicationUser ApplicationUser { get; set; }
+        [Display(Name ="Ngày mua")]
         public DateTime PurchasedDate { get; set; }
         [Display(Name = "Thành tiền")]
         public double Total { get; set; }

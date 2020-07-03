@@ -20,8 +20,9 @@ namespace DichVuGame.Models
         public double Balance { get; set; }
         [Display(Name ="Username")]
         public string User { get; set; }    
+        [Display(Name = "Ngày tham gia")]
+        public DateTime CreateDate { get; set; }
         public virtual ICollection<TopupHistory> TopupHistories { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
-        public virtual ICollection<RentalHistory> RentalHistories { get; set; }
     }
 }

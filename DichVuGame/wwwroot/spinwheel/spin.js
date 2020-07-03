@@ -34,7 +34,6 @@ $(document).ready(function () {
 				}
 
 				var aoY = t.offset().top;
-				$("#txt").html(aoY);
 				console.log(aoY);
 
 				/*23.7 is the minumum offset number that 
@@ -53,11 +52,13 @@ $(document).ready(function () {
 
 			$('#inner-wheel').css({
 				'transform': 'rotate(' + totalDegree + 'deg)'
+				
 			});
 
-			noY = t.offset().top;S
-
+			noY = t.offset().top;
+			
 		});
+		
 	});
 
 

@@ -10,5 +10,6 @@ namespace DichVuGame.Models.ViewModels
         public ApplicationUser ApplicationUser { get; set; }
         //public PagingInfo PagingInfo { get; set; }
         public List<ApplicationUser> ApplicationUsers { get; set; }
+        public string Error { get; set; }
     }
 }
