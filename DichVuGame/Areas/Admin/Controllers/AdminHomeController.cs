@@ -16,6 +16,7 @@ namespace DichVuGame.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Roles = Helper.ADMIN_ROLE + "," + Helper.MANAGER_ROLE)]
+    [Route("admin")]
     public class AdminHomeController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -30,6 +31,7 @@ namespace DichVuGame.Areas.Admin.Controllers
                 Register = new Dictionary<string, int>()
             };
         }
+        [Route("quanly")]
         public async Task<IActionResult> Index()
         {
             Dictionary<string, double> data = new Dictionary<string, double>();
@@ -70,6 +72,7 @@ namespace DichVuGame.Areas.Admin.Controllers
             return View(RevenueVM);
             
         }
+        [Route("search")]
         public async Task<IActionResult> Search(string q = null)
         {
             Assembly asm = Assembly.GetExecutingAssembly();

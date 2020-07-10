@@ -16,6 +16,12 @@ using System.Threading;
 using Microsoft.EntityFrameworkCore;
 using DichVuGame.Utility;
 using MimeKit.Encodings;
+using System.Text;
+using System.Net;
+using System.IO;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using DichVuGame.Services;
 
 namespace DichVuGame.Controllers
 {
@@ -24,6 +30,7 @@ namespace DichVuGame.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private ApplicationDbContext _db;
+        int pageSize = 9;
         [BindProperty]
         public GamesViewModel gamesVM { get; set; }
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext db)
@@ -41,8 +48,10 @@ namespace DichVuGame.Controllers
             };
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
+            StringBuilder url = new StringBuilder();
+            url.Append("/Customer/Home?page=:");
             var user = await _db.ApplicationUsers.Where(u => u.Email == User.Identity.Name).FirstOrDefaultAsync();
             if (user != null)
             {
@@ -52,27 +61,41 @@ namespace DichVuGame.Controllers
                 }
             }
             List<CartViewModel> lstCart = HttpContext.Session.Get<List<CartViewModel>>("ShoppingCartSession");
-            List<CartViewModel> lstCart2 = HttpContext.Session.Get<List<CartViewModel>>("ShoppingCartSession2");
             if (lstCart == null)
             {
                 lstCart = new List<CartViewModel>();
             }
-            if (lstCart2 == null)
-            {
-                lstCart2 = new List<CartViewModel>();
-            }
             HttpContext.Session.Set("ShoppingCartSession", lstCart);
-            HttpContext.Session.Set("ShoppingCartSession2", lstCart2);
-            var games = await _db.Games.Where(u => u.IsPublish == true).Include(u => u.Studio).ToListAsync();
-            gamesVM.Games = games;
+            CallAPI callAPI = new CallAPI("https://localhost:44387/api/games");
+            List<Game> games = JsonConvert.DeserializeObject<List<Game>>(callAPI.GetResponse());
+            gamesVM.Games = games.Where(u => u.IsPublish == true).Skip((page -1)*pageSize).Take(pageSize).ToList();
+            gamesVM.PagingInfo = new PagingInfo()
+            {
+                CurrentPage = page,
+                ItemsPerPage = pageSize,
+                urlParam = url.ToString(),
+                TotalItems = games.Count
+            };
             return View(gamesVM);
         }
         public async Task<IActionResult> Search(string q = null)
         {
             if (q != null)
             {
-                var queryGames = await _db.Games.Where(u => u.Gamename.ToLower().Trim().Contains(q.ToLower().Trim()) || u.Studio.Studioname.ToLower().Trim().Contains(q.ToLower().Trim())).Include(u => u.Studio).ToListAsync();
-                gamesVM.Games = queryGames;
+                StringBuilder param = new StringBuilder();
+                param.Append("/Customer/Home?page=:");
+                string searchUrl = Helper.ApiUrl + $"/api/games/search?q={q}";
+                CallAPI callAPI = new CallAPI(searchUrl);
+
+                List<Game> games = JsonConvert.DeserializeObject<List<Game>>(callAPI.GetResponse());      
+                gamesVM.Games = games;
+                gamesVM.PagingInfo = new PagingInfo()
+                {
+                    CurrentPage = 1,
+                    TotalItems = games.Count,
+                    ItemsPerPage = pageSize,
+                    urlParam = param.ToString()
+                };
                 return View(nameof(Index), gamesVM);
 
             }
@@ -89,14 +112,16 @@ namespace DichVuGame.Controllers
             {
                 lstCart = new List<CartViewModel>();
             }
-            List<CartViewModel> lstCart2 = HttpContext.Session.Get<List<CartViewModel>>("ShoppingCartSession2");
-            if (lstCart2 == null)
-            {
-                lstCart2 = new List<CartViewModel>();
-            }
             HttpContext.Session.Set("ShoppingCartSession", lstCart);
-            HttpContext.Session.Set("ShoppingCartSession2", lstCart2);
-            var game = await _db.Games.Where(u => u.ID == id).Include(u => u.Studio).FirstOrDefaultAsync();
+            string apiUrl = Helper.ApiUrl + $"/api/games/{id}";
+            WebRequest request = WebRequest.Create(apiUrl);
+            request.Credentials = CredentialCache.DefaultCredentials;
+            WebResponse response = request.GetResponse();
+            Stream dataStream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(dataStream);
+            string responseFromServer = reader.ReadToEnd();
+            Game game = JsonConvert.DeserializeObject<Game>(responseFromServer);
+
             var user = await _db.ApplicationUsers.Where(u => u.Email == User.Identity.Name).FirstOrDefaultAsync();
             var commentOfGame = await (from a in _db.Games
                                        join b in _db.GameComments

@@ -27,7 +27,7 @@ using DichVuGame.Models;
 #line hidden
 #nullable disable
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"235232254494328b488c92934a3d909ca1d09d2a", @"/Areas/Customer/Views/TopupHistories/Details.cshtml")]
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"983c4a7f1991df620ced787059c0b171deaefb73", @"/Areas/Customer/_ViewImports.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"204fd248a0bee97b8bade4baa1b5f81207cd69f5", @"/Areas/Customer/_ViewImports.cshtml")]
     public class Areas_Customer_Views_TopupHistories_Details : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<DichVuGame.Models.TopupHistory>
     {
         private static readonly global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute __tagHelperAttribute_0 = new global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute("asp-action", "Edit", global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);

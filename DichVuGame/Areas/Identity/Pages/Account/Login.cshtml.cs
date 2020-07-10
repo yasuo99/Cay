@@ -88,71 +88,104 @@ namespace DichVuGame.Areas.Identity.Pages.Account
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var user = await _db.ApplicationUsers.Where(u => u.Email == Input.Email).FirstOrDefaultAsync();
-                var result = await _signInManager.CheckPasswordSignInAsync(user, Input.Password, lockoutOnFailure: true);
-                if (result.Succeeded)
+                if (user != null)
                 {
-                    if (await _userManager.IsInRoleAsync(user, Helper.ADMIN_ROLE) || await _userManager.IsInRoleAsync(user, Helper.CUSTOMERCARE_ROLE) || await _userManager.IsInRoleAsync(user, Helper.MANAGER_ROLE) || await _userManager.IsInRoleAsync(user, Helper.MRHAI_ROLE))
+                    var result = await _signInManager.CheckPasswordSignInAsync(user, Input.Password, lockoutOnFailure: true);
+                    if (result.Succeeded)
                     {
-                        var login = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+                        if (await _userManager.IsInRoleAsync(user, Helper.ADMIN_ROLE) || await _userManager.IsInRoleAsync(user, Helper.CUSTOMERCARE_ROLE) || await _userManager.IsInRoleAsync(user, Helper.MANAGER_ROLE) || await _userManager.IsInRoleAsync(user, Helper.MRHAI_ROLE))
+                        {
+                            var login = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+                            if (user.EmailConfirmed)
+                            {
+                                return RedirectToAction("Index", "AdminHome", new { area = "Admin" });
+                            }
+                            else
+                            {
+                                return LocalRedirect("/Identity/Account/Manage/ChangePassword");
+                            }
+                        }
                         if (user.EmailConfirmed)
                         {
-                            return RedirectToAction("Index", "AdminHome", new { area = "Admin" });
+                            var otpFromSession = HttpContext.Session.Get<OTPSession>("OTP");
+                            if (otpFromSession != null)
+                            {
+                                if (DateTime.Now.CompareTo(otpFromSession.ExpireTime) > 0)
+                                {
+                                    var randomOtp = new Random().Next(10000, 99999);
+                                    OTPSession otpSession = new OTPSession(randomOtp, DateTime.Now.AddMinutes(5), Input.Email, Input.Password, Input.RememberMe);
+                                    HttpContext.Session.Set("OTP", otpSession);
+                                    using (SmtpClient client = new SmtpClient())
+                                    {
+                                        var message = new MimeMessage();
+                                        message.From.Add(new MailboxAddress("GameProvider", "yasuo12091999@gmail.com"));
+                                        message.To.Add(new MailboxAddress("Không trả lời", user.Email));
+                                        message.Subject = "Xác thực OTP";
+                                        message.Body = new TextPart(MimeKit.Text.TextFormat.Text)
+                                        {
+                                            Text = "Chúng tôi nhận thấy bạn vừa thực hiện đăng nhập, vui lòng sử dụng mã OTP được cung cấp để xác thực!" + Environment.NewLine + "Mã OTP: " + randomOtp +
+                                        Environment.NewLine + "Thời gian hiệu lực OTP: 5 phút."
+                                        };
+                                        client.Connect("smtp.gmail.com", 465, true);
+                                        client.Authenticate("yasuo120999@gmail.com", "Thanhpro1999@");
+                                        client.Send(message);
+                                        client.Disconnect(true);
+                                        return RedirectToPage("OTPConfirm");
+                                    }
+                                }
+                                else if (DateTime.Now.CompareTo(otpFromSession.ExpireTime) < 0)
+                                {
+                                    ModelState.AddModelError("OTPRequire", "Mã OTP đã được gửi");
+                                    return RedirectToPage("OTPConfirm");
+                                }
+                            }
+                            else
+                            {
+                                var randomOtp = new Random().Next(10000, 99999);
+                                OTPSession otpSession = new OTPSession(randomOtp, DateTime.Now.AddMinutes(5), Input.Email, Input.Password, Input.RememberMe);
+                                HttpContext.Session.Set("OTP", otpSession);
+                                using (SmtpClient client = new SmtpClient())
+                                {
+                                    var message = new MimeMessage();
+                                    message.From.Add(new MailboxAddress("GameProvider", "yasuo12091999@gmail.com"));
+                                    message.To.Add(new MailboxAddress("Không trả lời", user.Email));
+                                    message.Subject = "Xác thực OTP";
+                                    message.Body = new TextPart(MimeKit.Text.TextFormat.Text)
+                                    {
+                                        Text = "Chúng tôi nhận thấy bạn vừa thực hiện đăng nhập, vui lòng sử dụng mã OTP được cung cấp để xác thực!" + Environment.NewLine + "Mã OTP: " + randomOtp +
+                                    Environment.NewLine + "Thời gian hiệu lực OTP: 5 phút."
+                                    };
+                                    client.Connect("smtp.gmail.com", 465, true);
+                                    client.Authenticate("yasuo120999@gmail.com", "Thanhpro1999@");
+                                    client.Send(message);
+                                    client.Disconnect(true);
+                                    return RedirectToPage("OTPConfirm");
+                                }
+                            }
                         }
                         else
                         {
-                            return LocalRedirect("/Identity/Account/Manage/ChangePassword");
+                            ModelState.AddModelError("ConfirmEmail", "Vui lòng xác nhận email đăng ký để sử dụng");
+                            return Page();
                         }
                     }
-                    if (user.EmailConfirmed)
+                    if (result.RequiresTwoFactor)
                     {
-                        var otpFromSession = HttpContext.Session.Get<OTPSession>("OTP");
-                        if (DateTime.Now.CompareTo(otpFromSession) > 0)
-                        {
-                            var randomOtp = new Random().Next(10000, 99999);
-                            OTPSession otpSession = new OTPSession(randomOtp, DateTime.Now.AddMinutes(5), Input.Email, Input.Password, Input.RememberMe);
-                            HttpContext.Session.Set("OTP", otpSession);
-                            using (SmtpClient client = new SmtpClient())
-                            {
-                                var message = new MimeMessage();
-                                message.From.Add(new MailboxAddress("GameProvider", "yasuo12091999@gmail.com"));
-                                message.To.Add(new MailboxAddress("Không trả lời", user.Email));
-                                message.Subject = "Xác thực OTP";
-                                message.Body = new TextPart(MimeKit.Text.TextFormat.Text)
-                                {
-                                    Text = "Chúng tôi nhận thấy bạn vừa thực hiện đăng nhập, vui lòng sử dụng mã OTP được cung cấp để xác thực!" + Environment.NewLine + "Mã OTP: " + randomOtp +
-                                Environment.NewLine + "Thời gian hiệu lực OTP: 5 phút."
-                                };
-                                client.Connect("smtp.gmail.com", 465, true);
-                                client.Authenticate("yasuo120999@gmail.com", "Thanhpro1999@");
-                                client.Send(message);
-                                client.Disconnect(true);
-                                return RedirectToPage("OTPConfirm");
-                            }
-                        }
-                        else if (DateTime.Now.CompareTo(otpFromSession) < 0)
-                        {
-                            ModelState.AddModelError("OTPRequire", "Mã OTP đã được gửi");
-                            return RedirectToPage("OTPConfirm");
-                        }
+                        return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+                    }
+                    if (result.IsLockedOut)
+                    {
+                        _logger.LogWarning("User account locked out.");
+                        return RedirectToPage("./Lockout");
                     }
                     else
                     {
-                        ModelState.AddModelError("ConfirmEmail", "Vui lòng xác nhận email đăng ký để sử dụng");
+                        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                         return Page();
                     }
                 }
-                if (result.RequiresTwoFactor)
-                {
-                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-                }
-                if (result.IsLockedOut)
-                {
-                    _logger.LogWarning("User account locked out.");
-                    return RedirectToPage("./Lockout");
-                }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                     return Page();
                 }
             }

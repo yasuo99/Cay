@@ -11,6 +11,7 @@ using DichVuGame.Models;
 namespace DichVuGame.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Route("the-tag")]
     public class TagsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -21,12 +22,14 @@ namespace DichVuGame.Areas.Admin.Controllers
         }
 
         // GET: Admin/Tags
+        [Route("quan-ly")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Tags.ToListAsync());
         }
 
         // GET: Admin/Tags/Details/5
+        [Route("chi-tiet/{id}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -45,6 +48,7 @@ namespace DichVuGame.Areas.Admin.Controllers
         }
 
         // GET: Admin/Tags/Create
+        [Route("them-moi")]
         public IActionResult Create()
         {
             return View();
@@ -67,6 +71,7 @@ namespace DichVuGame.Areas.Admin.Controllers
         }
 
         // GET: Admin/Tags/Edit/5
+        [Route("chinh-sua/{id}")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -118,6 +123,7 @@ namespace DichVuGame.Areas.Admin.Controllers
         }
 
         // GET: Admin/Tags/Delete/5
+        [Route("xoa/{id}")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

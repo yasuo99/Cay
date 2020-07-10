@@ -55,7 +55,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Quản lý code game</title>
+    <title>Bootstrap CRUD Data Table for Database with Modal Form</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -359,41 +359,42 @@
         });
     </script>
 </head>
-<body>
-    <div class="container-xl">
-        <div class="table-responsive">
-            <div class="table-wrapper">
-                <div class="table-title">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <h2>Danh sách code game</h2>
-                        </div>
-                        <div class="col-sm-6">
-
+@{int id = 0;
+    <body>
+        <div class="container-xl">
+            <div class="table-responsive">
+                <div class="table-wrapper">
+                    <div class="table-title">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h2>Danh sách code game</h2>
+                            </div>
+                            <div class="col-sm-6">
+                                
+                            </div>
                         </div>
                     </div>
-                </div>
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Game)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Gamecode)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Available)
-                            </th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-
+                    <table class="table table-striped table-hover">
+                        <thead>
                             <tr>
-
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Game)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Gamecode)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Available)
+                                </th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                
+                            <tr>
+                                @{ id = item.ID;}
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Game.ID)
                                 </td>
@@ -405,62 +406,50 @@
                                 </td>
                                 <td>
                                     <div class="btn-group">
-                                        @if (item.Available)
-                                        {
-                                            <a type="button" class="btn btn-success" style="color:azure" asp-action="Edit" asp-controller="Codes" asp-route-id="@item.ID"><i class="fas fa-edit"></i></a>
-                                        }
-                                        <a title="Delete" type="button" data-toggle="modal" class="btn btn-danger" onclick="DeleteUser(this.id)" style="color:azure"><i class="fas fa-trash-alt"></i></a>
-
+                                        <a type="button" class="btn btn-success" style="color:azure; margin-right:4px" asp-action="Edit" asp-controller="Codes" asp-route-id="@item.ID"><i class="fas fa-edit"></i></a>
+                                        <a title="Delete" type="button" data-toggle="modal" class="btn btn-danger" style="color:azure"><i class="fas fa-trash-alt"></i></a>
                                     </div>
-
                                 </td>
                             </tr>
                         }
-                    </tbody>
-                </table>
-                <div class="clearfix">
-                    <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
-                    <ul class="pagination">
-                        <li class="page-item disabled"><a href="#">Previous</a></li>
-                        <li class="page-item active"><a href="#" class="page-link">1</a></li>
-                        <li class="page-item"><a href="#" class="page-link">2</a></li>
-                        <li class="page-item "><a href="#" class="page-link">3</a></li>
-                        <li class="page-item"><a href="#" class="page-link">4</a></li>
-                        <li class="page-item"><a href="#" class="page-link">5</a></li>
-                        <li class="page-item"><a href="#" class="page-link">Next</a></li>
-                    </ul>
+                        </tbody>
+                    </table>
+                    <div class="clearfix">
+                        <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
+                        <ul class="pagination">
+                            <li class="page-item disabled"><a href="#">Previous</a></li>
+                            <li class="page-item active"><a href="#" class="page-link">1</a></li>
+                            <li class="page-item"><a href="#" class="page-link">2</a></li>
+                            <li class="page-item "><a href="#" class="page-link">3</a></li>
+                            <li class="page-item"><a href="#" class="page-link">4</a></li>
+                            <li class="page-item"><a href="#" class="page-link">5</a></li>
+                            <li class="page-item"><a href="#" class="page-link">Next</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div id="deleteEmployeeModal" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form asp-action="Delete">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Xoá game</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Bạn có chắc muốn xoá mã này ! </p>
-                        <p class="text-warning"><small>Không thể hoàn tác.</small></p>
-                    </div>
-                    <div class="modal-footer">
-                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                        <input type="hidden" name="codeid" />
-                        <input type="submit" class="btn btn-danger" value="Delete">
-                    </div>
-                </form>
+        <div id="deleteEmployeeModal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form asp-action="Delete">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Xoá game</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Bạn có chắc muốn xoá mã này ! </p>
+                            <p class="text-warning"><small>Không thể hoàn tác.</small></p>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                            <input type="hidden" asp-for="@id" />
+                            <input type="submit" class="btn btn-danger" value="Delete">
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-    <div>
-        <a asp-controller="Games" asp-action="Index">Quay lại</a>
-    </div>
-    <script>
-        function DeleteUser(id) {
-            document.getElementById("codeid").value = id;
-        }
-    </script>
-</body>
-</html>
+        
+    </body>
+    }

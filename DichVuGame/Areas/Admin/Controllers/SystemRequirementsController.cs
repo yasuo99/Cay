@@ -11,6 +11,7 @@ using DichVuGame.Models;
 namespace DichVuGame.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Route("cau-hinh-he-thong")]
     public class SystemRequirementsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,14 +20,14 @@ namespace DichVuGame.Areas.Admin.Controllers
         {
             _context = context;
         }
-
+        [Route("quan-ly")]
         // GET: Admin/SystemRequirements
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.SystemRequirements.Include(s => s.Game);
             return View(await applicationDbContext.ToListAsync());
         }
-
+        [Route("chi-tiet")]
         // GET: Admin/SystemRequirements/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -47,10 +48,16 @@ namespace DichVuGame.Areas.Admin.Controllers
         }
 
         // GET: Admin/SystemRequirements/Create
-        public IActionResult Create()
+        [Route("them-moi/game/{id}")]
+        public async Task<IActionResult> Create(int id)
         {
             ViewData["SystemRequirementID"] = new SelectList(_context.Games, "ID", "Gamename");
-            return View();
+            var game = await _context.Games.Where(u => u.ID == id).FirstOrDefaultAsync();
+            SystemRequirement sys = new SystemRequirement()
+            {
+                SystemRequirementID = game.ID
+            };
+            return View(sys);
         }
 
         // POST: Admin/SystemRequirements/Create
@@ -79,6 +86,7 @@ namespace DichVuGame.Areas.Admin.Controllers
         }
 
         // GET: Admin/SystemRequirements/Edit/5
+        [Route("chinh-sua/{id}")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -132,6 +140,7 @@ namespace DichVuGame.Areas.Admin.Controllers
         }
 
         // GET: Admin/SystemRequirements/Delete/5
+        [Route("xoa/{id}")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

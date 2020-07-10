@@ -43,7 +43,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Quản lý quốc gia</title>
+    <title>Bootstrap CRUD Data Table for Database with Modal Form</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -366,7 +366,7 @@
                         <thead>
                             <tr>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.Countryname)
+                                   Tên quốc gia 
                                 </th>
                                 <td>
                                 </td>
@@ -384,11 +384,11 @@
                                     <td>
                                     </td>
                                     <td>
+                                        <div class="btn-group">
+                                            <a type="button" class="btn btn-success" style="color:azure; margin-right:4px" asp-action="Edit" asp-controller="Countries" asp-route-id="@item.ID"><i class="fas fa-edit"></i></a>
 
-                                        <a type="button" class="btn btn-success" style="color:azure" asp-action="Edit" asp-controller="Countries" asp-route-id="@item.ID"><i class="fas fa-edit"></i></a>
-
-                                        <a href="#deleteEmployeeModal" title="Delete" type="button" data-toggle="modal" class="btn btn-danger" style="color:azure"><i class="fas fa-trash-alt"></i></a>
-
+                                            <a href="#deleteEmployeeModal" title="Delete" type="button" data-toggle="modal" class="btn btn-danger" style="color:azure"><i class="fas fa-trash-alt"></i></a>
+                                        </div>
                                     </td>
                                 </tr>
                             }

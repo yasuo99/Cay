@@ -5,7 +5,7 @@
     Layout = "~/Areas/Admin/Views/AdminHome/_CMSLayout.cshtml";
 }
 
-<h1>Create</h1>
+@*<h1>Create</h1>
 
 <h4>New</h4>
 <hr />
@@ -32,5 +32,40 @@
 
 <div>
     <a asp-action="Index">Back to List</a>
-</div>
+</div>*@
 
+<br />
+<div class="p-4 border rounded" style="background-color:#435d7d">
+    <h2 class="text-white" style="font-family:Bahnschrift;color:azure">Thêm tin tức </h2>
+</div>
+<br />
+<form method="post" asp-action="Create" enctype="multipart/form-data">
+    
+    <div class="p-4 border rounded">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="col-2">
+            <label asp-for="Title" class="control-label"></label>
+        </div>
+        <div class="col-5">
+            <input asp-for="Title" class="form-control" />
+        </div>
+        <span asp-validation-for="Title" class="text-danger"></span>
+        <br />
+
+        <div class="col-2">
+            <label asp-for="Content" class="control-label"></label>
+        </div>
+        <div class="col-5">
+            <input asp-for="Content" class="form-control" />
+        </div>
+        <span asp-validation-for="Content" class="text-danger"></span>
+        <br />
+
+        <br />
+        <div class="form-gruop">
+            <input type="submit" class="btn btn-primary" value="Thêm tin tức" />
+            <a asp-action="Index" class="btn btn-success">Trở về </a>
+        </div>
+    </div>
+</form>

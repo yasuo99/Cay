@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 using DichVuGame.Data;
 using DichVuGame.Models;
 using DichVuGame.Models.ViewModels;
+using DichVuGame.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 
 namespace DichVuGame.Areas.Customer.Controllers
@@ -30,9 +33,17 @@ namespace DichVuGame.Areas.Customer.Controllers
         {
             return View(SpinwheelVM);
         }
+        [HttpPost]
+        //[Authorize(Roles = Helper.CUSTOMER_ROLE)]
         public async Task<IActionResult> Reward()
         {
-            List<String> Reward = new List<string>() { "Game", "Discount", "Coint" };
+            //var user = await _db.ApplicationUsers.Where(u => u.Email == User.Identity.Name).FirstOrDefaultAsync();
+            //if(user.Balance < 20000)
+            //{
+            //    ModelState.AddModelError("OutOfBalance", "Tài khoản của bạn không đủ vui lòng nạp thêm");
+            //    return View(nameof(Index));
+            //}    
+            List<String> Reward = new List<string>() { "Game", "Discount", "Coin" };
             var totalReward = Reward.Count();
             var rewardOffset = new Random().Next(0, totalReward);
             var randomReward = Reward.Skip(rewardOffset).FirstOrDefault();
@@ -43,8 +54,16 @@ namespace DichVuGame.Areas.Customer.Controllers
                     var total = _db.Games.Count();
                     var offset = new Random().Next(0, total);
                     var game = _db.Games.Skip(offset).FirstOrDefault();
-                    var code = _db.Codes.Where(u => u.GameID == game.ID).FirstOrDefault();
-                    SpinwheelVM.Code = code;
+                    var code = _db.Codes.Where(u => u.GameID == game.ID && u.Available == true).Include(u => u.Game).FirstOrDefault();
+                    if(code == null)
+                    {
+                        var randomCoin1 = new Random().Next(40000, 60000);
+                        SpinwheelVM.Coin = randomCoin1;
+                    }
+                    else
+                    {
+                        SpinwheelVM.Code = code;
+                    }
                     //Order order = new Order()
                     //{
                     //    ApplicationUserID = user.Id,
@@ -64,7 +83,16 @@ namespace DichVuGame.Areas.Customer.Controllers
                     var totalDiscount = _db.Discount.Count();
                     var offsetDiscount = new Random().Next(0, totalDiscount);
                     var discount = _db.Discount.Skip(offsetDiscount).FirstOrDefault();
-                    SpinwheelVM.Discount = discount;
+                    if(discount == null)
+                    {
+                        var randomCoin2 = new Random().Next(10000, 30000);
+                        SpinwheelVM.Coin = randomCoin2;
+                    }
+                    else
+                    {
+                        SpinwheelVM.Discount = discount;
+                    }
+                    
                     break;
                 case "Coin": //Lấy random số coin 
                     var randomCoin = new Random().Next(10000, 30000);
@@ -75,7 +103,7 @@ namespace DichVuGame.Areas.Customer.Controllers
                 default:
                     break;
             }
-            return View(SpinwheelVM);
+            return View(nameof(Index), SpinwheelVM);
         }
 
     }

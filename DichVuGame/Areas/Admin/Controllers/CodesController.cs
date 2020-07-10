@@ -13,6 +13,7 @@ using DichVuGame.Models.ViewModels;
 namespace DichVuGame.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Route("ma-game")]
     public class CodesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -27,7 +28,7 @@ namespace DichVuGame.Areas.Admin.Controllers
                 Code = new Code()
             };
         }
-
+        [Route("quan-ly")]
         // GET: Admin/Codes
         public async Task<IActionResult> Index()
         {
@@ -36,6 +37,7 @@ namespace DichVuGame.Areas.Admin.Controllers
         }
 
         // GET: Admin/Codes/Details/5
+        [Route("chi-tiet/{id}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -53,7 +55,7 @@ namespace DichVuGame.Areas.Admin.Controllers
 
             return View(code);
         }
-
+        [Route("them-moi/game/{id}")]
         // GET: Admin/Codes/Create
         public async Task<IActionResult> Create(int id)
         {
@@ -93,6 +95,7 @@ namespace DichVuGame.Areas.Admin.Controllers
         }
 
         // GET: Admin/Codes/Edit/5
+        [Route("chinh-sua/{id}")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -146,6 +149,7 @@ namespace DichVuGame.Areas.Admin.Controllers
         }
 
         // GET: Admin/Codes/Delete/5
+        [Route("xoa/{id}")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

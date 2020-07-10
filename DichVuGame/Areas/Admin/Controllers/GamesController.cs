@@ -13,10 +13,15 @@ using System.Net.WebSockets;
 using Microsoft.CodeAnalysis.CSharp;
 using System.IO;
 using DichVuGame.Utility;
+using Newtonsoft.Json;
+using System.Net;
+using Microsoft.AspNetCore.Routing;
+using DichVuGame.Services;
 
 namespace DichVuGame.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Route("games")]
     public class GamesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -38,21 +43,25 @@ namespace DichVuGame.Areas.Admin.Controllers
                 SystemRequirement = new SystemRequirement()
             };
         }
-
+        [Route("quan-ly")]
         // GET: Admin/Games
         public ActionResult Index(string q = null)
         {
-            if(q == "Selling")
+            CallAPI callAPI = new CallAPI("https://localhost:44387/api/games"); 
+            List<Game> games = JsonConvert.DeserializeObject<List<Game>>(callAPI.GetResponse());
+            GamesViewModel.Games = games;
+            if (q == "Selling")
             {
-                GamesViewModel.Games = GamesViewModel.Games.Where(u => u.IsPublish == true).ToList();
+                GamesViewModel.Games = games.Where(u => u.IsPublish==true).ToList();
             }
-            if(q == "Waiting")
+            if (q == "Waiting")
             {
-                GamesViewModel.Games = GamesViewModel.Games.Where(u => u.IsPublish == false).ToList();
+                GamesViewModel.Games = games.Where(u => u.IsPublish == false).ToList();
             }
             return View(GamesViewModel);
+            
         }
-
+        [Route("chi-tiet/{id}")]
         // GET: Admin/Games/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -76,7 +85,7 @@ namespace DichVuGame.Areas.Admin.Controllers
             GamesViewModel.GameTags = gameTag;
             return View(GamesViewModel);
         }
-
+        [Route("them-moi")]
         // GET: Admin/Games/Create
         public IActionResult Create()
         {
@@ -153,6 +162,7 @@ namespace DichVuGame.Areas.Admin.Controllers
         }
 
         // GET: Admin/Games/Edit/5
+        [Route("chinh-sua/{id}")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -222,6 +232,7 @@ namespace DichVuGame.Areas.Admin.Controllers
         }
 
         // GET: Admin/Games/Delete/5
+        [Route("xoa/{id}")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

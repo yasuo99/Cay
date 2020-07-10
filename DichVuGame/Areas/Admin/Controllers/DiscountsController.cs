@@ -11,6 +11,7 @@ using DichVuGame.Models;
 namespace DichVuGame.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Route("ma-giam-gia")]
     public class DiscountsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -21,12 +22,14 @@ namespace DichVuGame.Areas.Admin.Controllers
         }
 
         // GET: Admin/Discounts
+        [Route("quan-ly")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Discount.OrderBy(u => u.Available).ToListAsync());
         }
 
         // GET: Admin/Discounts/Details/5
+        [Route("chi-tiet/{id}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -45,6 +48,7 @@ namespace DichVuGame.Areas.Admin.Controllers
         }
 
         // GET: Admin/Discounts/Create
+        [Route("them-moi")]
         public IActionResult Create()
         {
             return View();
@@ -67,6 +71,7 @@ namespace DichVuGame.Areas.Admin.Controllers
         }
 
         // GET: Admin/Discounts/Edit/5
+        [Route("chinh-sua/{id}")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -122,6 +127,7 @@ namespace DichVuGame.Areas.Admin.Controllers
         }
 
         // GET: Admin/Discounts/Delete/5
+        [Route("xoa/{id}")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

@@ -386,9 +386,10 @@
                                     <td>
                                     </td>
                                     <td>
-                                        <a type="button" class="btn btn-success" style="color:azure" asp-action="Edit" asp-controller="Tags" asp-route-id="@item.ID"><i class="fas fa-edit"></i></a>
+                                        <div class="btn-group">
+                                        <a type="button" class="btn btn-success" style="color:azure; margin-right:4px" asp-action="Edit" asp-controller="Tags" asp-route-id="@item.ID"><i class="fas fa-edit"></i></a>
                                         <a href="#deleteEmployeeModal" title="Delete" type="button" data-toggle="modal" class="btn btn-danger" style="color:azure"><i class="fas fa-trash-alt"></i></a>
-
+                                        </div>
                                     </td>
                                 </tr>
                             }
@@ -397,13 +398,13 @@
                     <div class="clearfix">
                         <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
                         <ul class="pagination">
-                            <li class="page-item disabled"><a href="#">Previous</a></li>
+                            <li class="page-item disabled"><a href="#">Trước</a></li>
                             <li class="page-item active"><a href="#" class="page-link">1</a></li>
                             <li class="page-item"><a href="#" class="page-link">2</a></li>
                             <li class="page-item "><a href="#" class="page-link">3</a></li>
                             <li class="page-item"><a href="#" class="page-link">4</a></li>
                             <li class="page-item"><a href="#" class="page-link">5</a></li>
-                            <li class="page-item"><a href="#" class="page-link">Next</a></li>
+                            <li class="page-item"><a href="#" class="page-link">Tiếp</a></li>
                         </ul>
                     </div>
                 </div>
@@ -414,11 +415,11 @@
                 <div class="modal-content">
                     <form asp-action="Delete">
                         <div class="modal-header">
-                            <h4 class="modal-title">Xoá game</h4>
+                            <h4 class="modal-title">Xoá thẻ</h4>
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                         </div>
                         <div class="modal-body">
-                            <p>Bạn có chắc muốn xoá quốc gia này </p>
+                            <p>Bạn có chắc muốn xoá thẻ này </p>
                             <p class="text-warning"><small>Không thể hoàn tác.</small></p>
                         </div>
                         <div class="modal-footer">

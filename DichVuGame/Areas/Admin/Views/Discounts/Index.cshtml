@@ -407,11 +407,11 @@
                                         @Html.DisplayFor(modelItem => item.Available)
                                     </td>
                                     <td>
+                                        <div class="btn-group">
+                                            <a type="button" class="btn btn-success" style="color:azure; margin-right:4px" asp-action="Edit" asp-route-id="@item.ID"><i class="fas fa-edit"></i></a>
 
-                                        <a type="button" class="btn btn-success" style="color:azure" asp-action="Edit" asp-controller="Discounts" asp-route-id="@item.ID"><i class="fas fa-edit"></i></a>
-
-                                        <a href="#deleteEmployeeModal" title="Delete" type="button" data-toggle="modal" class="btn btn-danger" style="color:azure"><i class="fas fa-trash-alt"></i></a>
-
+                                            <a href="#deleteEmployeeModal" title="Delete" type="button" data-toggle="modal" class="btn btn-danger" style="color:azure"><i class="fas fa-trash-alt"></i></a>
+                                        </div>
                                     </td>
                                 </tr>
                             }
